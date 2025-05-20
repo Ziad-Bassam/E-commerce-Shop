@@ -313,35 +313,37 @@
 
             <div class="user-info">
                 <h2>
-                <span>Admin</span></h2>
+                    <span>Admin</span>
+                </h2>
                 <!-- Auth links -->
                 @guest
                     @if (Route::has('login'))
-                        <li><a style="color: rgb(204, 250, 228)" href="{{ route('login') }}">{{ __('string.login') }}</a></li>
+                        <li><a style="color: rgb(204, 250, 228)" href="{{ route('login') }}">{{ __('string.login') }}</a>
+                        </li>
                     @endif
                     @if (Route::has('register'))
-                        <li><a style="color:rgb(204, 250, 228)" href="{{ route('register') }}">{{ __('string.register') }}</a></li>
+                        <li><a style="color:rgb(204, 250, 228)"
+                                href="{{ route('register') }}">{{ __('string.register') }}</a></li>
                     @endif
                 @else
                     <h3><span style="color: rgb(204, 250, 228)" href="#">{{ Auth::user()->name }}</span></h3>
 
 
-                        <h3><a style="color: rgb(204, 250, 228)" href="{{ route('logout') }}"
+                    <h3><a style="color: rgb(204, 250, 228)" href="{{ route('logout') }}"
                             onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                             {{ __('Logout') }}
                         </a></h3>
-                        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                            @csrf
-                        </form>
+                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                        @csrf
+                    </form>
 
                 @endguest
 
             </div>
 
             <ul class="side-menu">
-                <li class="side-item side-item-category">Home</li>
                 <li>
-                    <a class="side-menu__item" href="/charts">
+                    <a class="side-menu__item" href="/home">
                         <svg class="side-menu__icon" viewBox="0 0 24 24">
                             <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
                         </svg>
@@ -349,7 +351,8 @@
                     </a>
                 </li>
 
-                <li class="side-item side-item-category">categories</li>
+            </ul>
+            <ul>
                 <li>
                     <a class="side-menu__item" href="#">
                         <svg class="side-menu__icon" viewBox="0 0 24 24">
@@ -361,14 +364,14 @@
                         <i class="fas fa-chevron-down angle"></i>
                     </a>
                     <ul class="slide-menu">
-                        <li><a class="slide-item" href="{{ route('category') }}">List of categories</a></li>
-                        <li><a class="slide-item" href="#">Add categories</a></li>
-                        <li><a class="slide-item" href="#">Edit categories</a></li>
-                        <li><a class="slide-item" href="#">Delete categories</a></li>
+                        <li><a class="slide-item" href="{{ route('categories_table') }}">List of categories</a></li>
+                        <li><a class="slide-item" href="{{ route('add_category') }}">Add categories</a></li>
                     </ul>
                 </li>
+            </ul>
 
-                {{-- <li class="side-item side-item-category">التقارير</li>
+
+            {{-- <li class="side-item side-item-category">التقارير</li>
       <li>
         <a class="side-menu__item" href="#">
           <svg class="side-menu__icon" viewBox="0 0 24 24">
@@ -384,38 +387,36 @@
         </ul>
       </li> --}}
 
-                <li class="side-item side-item-category">Users</li>
-                <li>
-                    <a class="side-menu__item" href="#">
-                        <svg class="side-menu__icon" viewBox="0 0 24 24">
-                            <path
-                                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z" />
-                        </svg>
-                        <span class="side-menu__label">Users</span>
-                        <i class="fas fa-chevron-down angle"></i>
-                    </a>
-                    <ul class="slide-menu">
-                        <li><a class="slide-item" href="#">List of Users</a></li>
-                    </ul>
-                </li>
+            <li>
+                <a class="side-menu__item" href="#">
+                    <svg class="side-menu__icon" viewBox="0 0 24 24">
+                        <path
+                            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z" />
+                    </svg>
+                    <span class="side-menu__label">Users</span>
+                    <i class="fas fa-chevron-down angle"></i>
+                </a>
+                <ul class="slide-menu">
+                    <li><a class="slide-item" href="#">List of Users</a></li>
+                </ul>
+            </li>
 
-                <li class="side-item side-item-category">Settings</li>
-                <li>
-                    <a class="side-menu__item" href="#">
-                        <svg class="side-menu__icon" viewBox="0 0 24 24">
-                            <path
-                                d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z" />
-                        </svg>
-                        <span class="side-menu__label">Settings</span>
-                        <i class="fas fa-chevron-down angle"></i>
-                    </a>
-                    <ul class="slide-menu">
-                        <li><a class="slide-item" href="{{ route('category') }}">categories</a></li>
-                        <li><a class="slide-item" href="{{ route('product') }}">Products</a></li>
-                        <li><a class="slide-item" href="{{ route('add_product') }}">Add Product</a></li>
-                        <li><a class="slide-item" href="{{ route('products_table') }}">Products table</a></li>
-                    </ul>
-                </li>
+            <li>
+                <a class="side-menu__item" href="#">
+                    <svg class="side-menu__icon" viewBox="0 0 24 24">
+                        <path
+                            d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z" />
+                    </svg>
+                    <span class="side-menu__label">Settings</span>
+                    <i class="fas fa-chevron-down angle"></i>
+                </a>
+                <ul class="slide-menu">
+                    <li><a class="slide-item" href="{{ route('categories_table') }}">categories table</a></li>
+                    <li><a class="slide-item" href="{{ route('add_category') }}">Add categories</a></li>
+                    <li><a class="slide-item" href="{{ route('products_table') }}">Products table</a></li>
+                    <li><a class="slide-item" href="{{ route('add_product') }}">Add Product</a></li>
+                </ul>
+            </li>
             </ul>
         </aside>
 

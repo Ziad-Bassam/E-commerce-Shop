@@ -1,10 +1,10 @@
-@extends('layouts.master')
+@extends('layouts.auth')
 
 @section('title')
     Add Category
 @endsection
 @section('content')
-    <div class="product-section mt-150 mb-150">
+    <div class="product-section mt-50 mb-50">
         <div class="container">
             <div class="row">
                 <div class="col-lg-8 offset-lg-2 text-center">

@@ -36,6 +36,7 @@ Route::post('/storereview', [ReviewController::class , 'store'])->name('save_rev
 Route::get('/products/{catid?}', [ProductController::class , 'index'])->name('product');
 Route::get('addproduct' , [ProductController::class , 'addproduct'])->name('add_product')->middleware('checkrole:admin,salesman');
 
+Route::get('/categories_table' , [CategoryController::class , 'categories_table'])->name('categories_table')->middleware('checkrole:admin,salesman');
 
 Route::get('/add_category', [CategoryController::class , 'create'])->name('add_category')->middleware('checkrole:admin,salesman');
 Route::post('/storecategory' , [CategoryController::class , 'store'])->name('store_category')->middleware('checkrole:admin,salesman');

@@ -54,9 +54,10 @@ class CategoryController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function categories_table()
     {
-        //
+        $categories = Category::all();
+        return view('categories.categories_table' , ['categories' => $categories ]);
     }
 
     /**

@@ -71,5 +71,6 @@ return[
     'order summary' => 'ملخص الطلب',
     'logout' => 'تسجيل خروج',
     'add category' => 'اضافة قسم',
+    'categories table' => 'جدول الاقسام',
 
 ];

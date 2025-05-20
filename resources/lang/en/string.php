@@ -71,6 +71,7 @@ return[
     'order summary' => 'Order Summary',
     'logout' => 'Logout',
     'add category' => 'Add Category',
+    'categories table' => 'Categories Table',
 
 
 ];

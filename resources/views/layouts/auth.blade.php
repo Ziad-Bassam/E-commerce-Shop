@@ -69,16 +69,33 @@
                                     <li><a href="{{ route('control_panel') }}">{{ __('string.control panel') }}</a>
                                     </li>
                                 @endif
-                                <li><a href="{{ route('category') }}">{{ __('string.categories') }}</a></li>
-                                <li><a href="{{ route('add_category') }}">{{ __('string.add category') }}</a></li>
 
-                                <li><a href="{{ route('product') }}">{{ __('string.products') }}</a></li>
+                                <li><a href="{{ route('category') }}">{{ __('string.categories') }}</a>
+                                    @if (Auth::user() && (Auth::user()->role == 'admin' || Auth::user()->role == 'salesman'))
+                                        <ul class="sub-menu">
+                                            <li><a
+                                                    href="{{ route('add_category') }}">{{ __('string.add category') }}</a>
+                                            </li>
+                                            <li><a
+                                                    href="{{ route('categories_table') }}">{{ __('string.categories table') }}</a>
+                                            </li>
+                                        </ul>
+                                    @endif
+                                </li>
 
-                                @if (Auth::user() && (Auth::user()->role == 'admin' || Auth::user()->role == 'salesman'))
-                                    <li><a href="{{ route('add_product') }}">{{ __('string.add_product') }}</a></li>
-                                    <li><a href="{{ route('products_table') }}">{{ __('string.products_table') }}</a>
-                                    </li>
-                                @endif
+
+                                <li><a href="{{ route('product') }}">{{ __('string.products') }}</a>
+                                    @if (Auth::user() && (Auth::user()->role == 'admin' || Auth::user()->role == 'salesman'))
+                                        <ul class="sub-menu">
+                                            <li><a
+                                                    href="{{ route('add_product') }}">{{ __('string.add_product') }}</a>
+                                            </li>
+                                            <li><a
+                                                    href="{{ route('products_table') }}">{{ __('string.products_table') }}</a>
+                                            </li>
+                                        </ul>
+                                    @endif
+                                </li>
 
                                 <li><a href="{{ route('reviews') }}">{{ __('string.reviews') }}</a></li>
 
@@ -91,7 +108,6 @@
                                         <li><a href="{{ route('register') }}">{{ __('string.register') }}</a></li>
                                     @endif
                                 @else
-                                    <li><a href="#">{{ Auth::user()->name }}</a></li>
                                     <li>
                                         <a href="{{ route('logout') }}"
                                             onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
@@ -102,6 +118,7 @@
                                             @csrf
                                         </form>
                                     </li>
+                                    <li><a href="#">{{ Auth::user()->name }}</a></li>
                                 @endguest
 
                                 <li>

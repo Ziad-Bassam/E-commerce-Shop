@@ -77,6 +77,9 @@
                                             <li><a
                                                     href="{{ route('add_category') }}">{{ __('string.add category') }}</a>
                                             </li>
+                                            <li><a
+                                                    href="{{ route('categories_table') }}">{{ __('string.categories table') }}</a>
+                                            </li>
                                         </ul>
                                     @endif
                                 </li>
