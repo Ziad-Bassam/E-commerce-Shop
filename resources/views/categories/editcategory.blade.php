@@ -23,8 +23,7 @@
                         <form method="post" enctype="multipart/form-data" action="{{route('update_category')}}" id="fruitkha-contact">
                             @csrf()
                             <p>
-                                <input type="hidden" required style="width: 90%" placeholder="" value="{{ $category->id }}"
-                                    name="id" id="id">
+                                <input type="hidden" name="id" id="id" value="{{ $category->id }}">
                                 <input type="text" required style="width: 90%" placeholder="Name"
                                     value="{{ $category->name }}" name="name" id="name">
                                 <span class="text-danger">

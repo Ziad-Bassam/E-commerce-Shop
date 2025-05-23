@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CartRequest;
 use App\Models\Cart;
 use App\Models\Order;
 use App\Models\OrderDetails;
@@ -113,16 +114,8 @@ class CartController extends Controller
     // }
 
 
-    public function store(Request $request)
+    public function store(CartRequest $request)
     {
-        $request->validate([
-            'name' => ['required', 'string', 'max:50'],
-            'address' => ['required', 'string'],
-            'email' => ['required'],
-            'phone' => ['required'], //'regex:/^01[0-2,5]{1}[0-9]{8}$/'], egypt number
-        ]);
-
-
         DB::beginTransaction();
 
         try {

@@ -1,22 +1,32 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Models\Product;
 use App\Models\Category;
 use Illuminate\Support\Str;
-
+use App\Services\CategoryService;
+use App\Http\Requests\StoreCategoryRequest;
+use App\Http\Requests\UpdateCategoryRequest;
 use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
+
+
+    protected $categoryService;
+
+    public function __construct(CategoryService $categoryService)
+    {
+        $this->categoryService = $categoryService;
+    }
     /**
      * Display a listing of the resource.
      */
-    public function index () {
-
-        $categories = Category::paginate(6);
-        return view('welcome' , ['categories' => $categories ]);
-
+    public function index()
+    {
+        $categories = $this->categoryService->getPaginatedCategories(6);
+        return view('welcome', ['categories' => $categories]);
     }
 
     /**
@@ -30,25 +40,11 @@ class CategoryController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreCategoryRequest $request)
     {
+        $this->categoryService->createCategory($request->validated());
 
-        $request->validate([
-            'name' => ['required' ,  'unique:categories,name', 'max:50'],
-            'description' => ['required' , 'max:200'],
-            'photo' =>  ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
-
-        ]);
-
-        $newcategory = new Category();
-        $newcategory->name = $request->name;
-        $newcategory->description = $request->description;
-        $image_path = $request->photo->move('uploads' , Str::uuid()->toString() . '-' . $request->photo->getClientOriginalName());
-        $newcategory->image_path = $image_path;
-        $newcategory->name_AR = '' ;
-        $newcategory->save();
-
-        return redirect('/home');
+        return redirect('/home')->with('success', 'Category created successfully.');
     }
 
     /**
@@ -56,8 +52,8 @@ class CategoryController extends Controller
      */
     public function categories_table()
     {
-        $categories = Category::all();
-        return view('categories.categories_table' , ['categories' => $categories ]);
+        $categories = $this->categoryService->categories_table();
+        return view('categories.categories_table', ['categories' => $categories]);
     }
 
     /**
@@ -65,45 +61,17 @@ class CategoryController extends Controller
      */
     public function edit($catid = NULL)
     {
-        if ($catid != NULL) {
-
-            $category = Category::findOrFail($catid);
-            if($category == NULL){
-                // Better than findORfail
-                abort(403 , "Can't find this product");
-            }
-            return view('categories.editcategory' , ['category' => $category ]);
-        } else {
-            abort(403 , 'Please enter product id in the route');
-        }
-
+        $category = $this->categoryService->getCategoryById($catid);
+        return view('categories.editcategory', ['category' => $category]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request)
+    public function update(UpdateCategoryRequest  $request)
     {
-        $request->validate([
-            'name' => ['required' ,  'unique:categories,name', 'max:50'],
-            'description' => ['required' , 'max:200'],
-            'photo' =>  ['image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
-
-        ]);
-
-        $category = Category::findorfail($request->id);
-        if ($category) {
-            $category->name = $request->name;
-            $category->description = $request->description;
-            if ($request->hasFile('photo')) {
-                $image_path = $request->photo->move('uploads' , Str::uuid()->toString() . '-' . $request->photo->getClientOriginalName());
-                $category->image_path = $image_path;
-            }
-            $category->save();
-            return redirect('/home');
-        } else {
-            abort(403 , 'Please enter product id in the route');
-        }
+        $this->categoryService->updateCategory($request->validated());
+        return redirect('/home')->with('success', 'Category updated successfully.');
     }
 
     /**
@@ -111,12 +79,7 @@ class CategoryController extends Controller
      */
     public function destroy($catid = NULL)
     {
-        $category = Category::findorfail($catid);
-        if ($category) {
-            $category->delete();
-            return redirect('/home');
-        } else {
-            abort(403 , 'Please enter product id in the route');
-        }
+        $this->categoryService->destroyCategory($catid);
+        return redirect('/home');
     }
 }
