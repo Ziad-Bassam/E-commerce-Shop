@@ -6,7 +6,8 @@
 @section('content')
     <div class="d-flex justify-content-center align-items-center mt-3 mb-3">
         <div class="card shadow-sm text-center" style="width: 18rem; border-radius: 15px;">
-            <img src="{{ url($product->image_path) }}" class="card-img-top" style="height: 250px; object-fit: contain;" alt="Product Image">
+            <img src="{{ url($product->image_path) }}" class="card-img-top" style="height: 250px; object-fit: contain;"
+                alt="Product Image">
 
             <div class="card-body">
                 <h5 class="card-title">{{ $product->name }}</h5>
@@ -27,6 +28,8 @@
                     <div class="mb-3">
                         <label for="photo" class="form-label fw-bold">Upload Photo</label>
                         <input type="file" class="form-control" name="photo" id="photo">
+                        <br>
+
                         @error('photo')
                             <div class="text-danger mt-1">{{ $message }}</div>
                         @enderror

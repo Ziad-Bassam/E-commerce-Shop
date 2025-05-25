@@ -26,6 +26,7 @@
                             <p>
                                 <input type="text" required style="width: 90%" placeholder="Name"
                                     value="{{ old('name') }}" name="name" id="name">
+                                <br>
                                 <span class="text-danger">
                                     @error('name')
                                         {{ $message }}
@@ -36,6 +37,8 @@
                                 <textarea name="description" style="width: 90%" id="description" cols="30" rows="10"
                                     placeholder="Description">{{ old('description') }}</textarea>
                             </p>
+                            <br>
+
                             <span class="text-danger">
                                 @error('description')
                                     {{ $message }}
@@ -43,6 +46,8 @@
                             </span>
                             <p>
                                 <input type="file" style="width: 90%" class="form-control" name="photo" id="photo">
+                                <br>
+
                                 <span class="text-danger">
                                     @error('photo')
                                         {{ $message }}

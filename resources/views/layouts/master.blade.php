@@ -241,7 +241,7 @@
 
 
 
-    {{ trans('string.welcome') }}
+    {{-- {{ trans('string.welcome') }} --}}
 
 
     @yield('content')

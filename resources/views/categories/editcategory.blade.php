@@ -20,12 +20,15 @@
                     </div>
                     <div id="form_status"></div>
                     <div class="contact-form">
-                        <form method="post" enctype="multipart/form-data" action="{{route('update_category')}}" id="fruitkha-contact">
+                        <form method="post" enctype="multipart/form-data" action="{{ route('update_category') }}"
+                            id="fruitkha-contact">
                             @csrf()
                             <p>
                                 <input type="hidden" name="id" id="id" value="{{ $category->id }}">
                                 <input type="text" required style="width: 90%" placeholder="Name"
                                     value="{{ $category->name }}" name="name" id="name">
+                                <br>
+
                                 <span class="text-danger">
                                     @error('name')
                                         {{ $message }}
@@ -37,6 +40,8 @@
                                 <textarea name="description" style="width: 90%" id="description" cols="30" rows="10"
                                     placeholder="Description">{{ $category->description }}</textarea>
                             </p>
+                            <br>
+
                             <span class="text-danger">
                                 @error('description')
                                     {{ $message }}
@@ -44,11 +49,13 @@
                             </span>
 
                             <p>
-                                <input type="file" style="width: 90%"  class="form-control" name="photo" id="photo">
+                                <input type="file" style="width: 90%" class="form-control" name="photo" id="photo">
                             </p>
                             <p>
                                 <img src="{{ asset($category->image_path) }}" width="300" height="300"
                                     alt="error 404 not found">
+                                <br>
+
                                 <span class="text-danger">
                                     @error('photo')
                                         {{ $message }}

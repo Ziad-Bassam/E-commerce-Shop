@@ -25,6 +25,8 @@
                             <p>
                                 <input type="text" required style="width: 90%" placeholder="Name"
                                     value="{{ old('name') }}" name="name" id="name">
+                                <br>
+
                                 <span class="text-danger">
                                     @error('name')
                                         {{ $message }}
@@ -34,6 +36,8 @@
                             <p>
                                 <input type="text" required style="width: 90%" placeholder="Subject"
                                     value="{{ old('subject') }}" name="subject" id="subject">
+                                <br>
+
                                 <span class="text-danger">
                                     @error('subject')
                                         {{ $message }}
@@ -43,6 +47,8 @@
                             <p style="display: flex;">
                                 <input type="tel" required style="width: 44%" class="mr-4" value="{{ old('phone') }}"
                                     placeholder="Phone" name="phone" id="phone">
+                                <br>
+
                                 <span class="text-danger">
                                     @error('phone')
                                         {{ $message }}
@@ -50,6 +56,8 @@
                                 </span>
                                 <input type="email" required style="width: 44%" value="{{ old('email') }}"
                                     placeholder="Email" name="email" id="email">
+                                <br>
+
                                 <span class="text-danger">
                                     @error('email')
                                         {{ $message }}
@@ -59,6 +67,8 @@
                             <p>
                                 <textarea name="message" style="width: 90%" id="message" cols="30" rows="10" placeholder="message">{{ old('message') }}</textarea>
                             </p>
+                            <br>
+
                             <span class="text-danger">
                                 @error('message')
                                     {{ $message }}

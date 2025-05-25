@@ -20,11 +20,14 @@
                     </div>
                     <div id="form_status"></div>
                     <div class="contact-form">
-                        <form method="post" enctype="multipart/form-data" action="{{route('store_product')}}" id="fruitkha-contact">
+                        <form method="post" enctype="multipart/form-data" action="{{ route('store_product') }}"
+                            id="fruitkha-contact">
                             @csrf()
                             <p>
                                 <input type="text" required style="width: 90%" placeholder="Name"
                                     value="{{ old('name') }}" name="name" id="name">
+                                <br>
+
                                 <span class="text-danger">
                                     @error('name')
                                         {{ $message }}
@@ -34,6 +37,7 @@
                             <p style="display: flex;">
                                 <input type="number" required style="width: 44%" class="mr-4" value="{{ old('price') }}"
                                     placeholder="Price" name="price" id="price">
+                                <br>
                                 <span class="text-danger">
                                     @error('name')
                                         {{ $message }}
@@ -41,6 +45,7 @@
                                 </span>
                                 <input type="number" required style="width: 44%" value="{{ old('quantity') }}"
                                     placeholder="Quantity" name="quantity" id="quantity">
+                                <br>
                                 <span class="text-danger">
                                     @error('quantity')
                                         {{ $message }}
@@ -52,16 +57,19 @@
                                     placeholder="Description">{{ old('description') }}</textarea>
                             </p>
                             <span class="text-danger">
+                                <br>
                                 @error('description')
                                     {{ $message }}
                                 @enderror
                             </span>
                             <p>
-                                <select class="form-control" style="width: 90%" required name="category_id" id="category_id">
+                                <select class="form-control" style="width: 90%" required name="category_id"
+                                    id="category_id">
                                     @foreach ($categories as $category)
                                         <option value="{{ $category->id }}">{{ $category->name }}</option>
                                     @endforeach
                                 </select>
+                                <br>
                                 <span class="text-danger">
                                     @error('category_id')
                                         {{ $message }}
@@ -71,6 +79,7 @@
                             <p>
                                 <input type="file" style="width: 90%" class="form-control" name="photo" id="photo">
                                 <span class="text-danger">
+                                    <br>
                                     @error('photo')
                                         {{ $message }}
                                     @enderror
