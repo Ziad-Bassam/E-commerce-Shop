@@ -9,54 +9,41 @@ use App\Models\OrderDetails;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-
+use App\Services\CartService;
 
 class CartController extends Controller
 {
+    protected $cartService;
+
+    public function __construct(CartService $cartService)
+    {
+        $this->cartService = $cartService;
+    }
+
+
     /**
      * Display a listing of the resource.
      */
+
     public function index()
     {
+        $userId = auth()->id();
+        $data = $this->cartService->getUserCartData($userId);
 
-
-
-        $user_id = auth()->user()->id;
-        $cartproducts = Cart::with('Product')->where('user_id' , $user_id )->get();
-        $total = Cart::where('user_id', $user_id)
-        ->join('products', 'carts.product_id', '=', 'products.id')
-        ->selectRaw('SUM(products.price * carts.quantity) as total')
-        ->value('total');
         return view('product.cart', [
-            'cartproducts' => $cartproducts,
-            'total' => $total ?? 0, // لو التوتال null يعني الكارت فاضي نخليه 0
-        ]);    }
+            'cartproducts' => $data['cartproducts'],
+            'total' => $data['total'],
+        ]);
+    }
 
     /**
      * Show the form for creating a new resource.
      */
     public function add_product_to_cart($productid)
     {
-
-        $user_id = auth()->user()->id;
-
-        $result = Cart::where('user_id', $user_id)->where('product_id', $productid)->first();
-
-
-        if ($result) {
-            $result->quantity +=1;
-            $result->save();
-        } else {
-
-                $newcart = new Cart();
-
-                $newcart -> product_id = $productid ;
-                $newcart -> user_id = $user_id ;
-                $newcart -> quantity = 1 ;
-                $newcart -> save() ;
-            }
-            return back()->with('success', 'Product added to cart!');
-
+        $userId = auth()->id();
+        $this->cartService->addProductToCart($productid, $userId);
+        return back()->with('success', 'Product added to cart!');
     }
 
     /**
@@ -116,39 +103,14 @@ class CartController extends Controller
 
     public function store(CartRequest $request)
     {
-        DB::beginTransaction();
+        $userId = auth()->id();
 
         try {
-            $neworder = new Order();
-            $neworder->name = $request->name;
-            $neworder->address = $request->address;
-            $neworder->email = $request->email;
-            $neworder->phone = $request->phone;
-            $neworder->note = $request->note;
-            $user_id = auth()->user()->id;
-            $neworder->user_id = $user_id;
-            $neworder->save();
-
-            $cartproducts = Cart::with('Product')->where('user_id', $user_id)->get();
-            foreach ($cartproducts as $item) {
-                $neworderdetails = new OrderDetails();
-                $neworderdetails->product_id = $item->product_id;
-                $neworderdetails->price = $item->Product->price;
-                $neworderdetails->quantity = $item->quantity;
-                $neworderdetails->order_id = $neworder->id;
-                $neworderdetails->save();
-            }
-
-            DB::commit();
-            Cart::where('user_id', $user_id)->delete();
+            $this->cartService->placeOrder($request, $userId);
             return view('product.completeorder')->with('success', 'The request has been sent successfully');
         } catch (\Exception $e) {
-            DB::rollBack();
             return back()->with('error', $e->getMessage());
         }
-
-
-
     }
 
     /**
@@ -156,15 +118,12 @@ class CartController extends Controller
      */
     public function completeorder()
     {
-        $user_id = auth()->user()->id;
-        $cartproducts = Cart::with('Product')->where('user_id' , $user_id )->get();
-        $total = Cart::where('user_id', $user_id)
-        ->join('products', 'carts.product_id', '=', 'products.id')
-        ->selectRaw('SUM(products.price * carts.quantity) as total')
-        ->value('total');
+        $userId = auth()->id();
+        $data = $this->cartService->getCartSummaryForOrderComplete($userId);
+
         return view('product.completeorder', [
-            'cartproducts' => $cartproducts,
-            'total' => $total ?? 0, // لو التوتال null يعني الكارت فاضي نخليه 0
+            'cartproducts' => $data['cartproducts'],
+            'total' => $data['total'],
         ]);
     }
 
@@ -173,20 +132,12 @@ class CartController extends Controller
      */
     public function previous_orders()
     {
-        $user_id = auth()->user()->id;
+        $userId = auth()->id();
+        $orders = $this->cartService->getUserPreviousOrders($userId);
 
-        $previous_orders = Order::with('OrderDetails')->where('user_id' , $user_id)->get();
         return view('product.previousorders', [
-            'orders' => $previous_orders
+            'orders' => $orders
         ]);
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
     }
 
     /**
@@ -194,10 +145,7 @@ class CartController extends Controller
      */
     public function destroy($cartid = null)
     {
-        if ($cartid) {
-            Cart::findOrFail($cartid)->delete();
-        }
-
+        $this->cartService->deleteCartItem($cartid);
         return redirect('/cart');
     }
 }

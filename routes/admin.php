@@ -16,7 +16,7 @@ use Illuminate\Http\Request;
 
 
 
-Route::get('addproduct' , [ProductController::class , 'addproduct'])->name('add_product')->middleware('checkrole:admin,salesman');
+Route::get('addproduct' , [ProductController::class , 'create'])->name('add_product')->middleware('checkrole:admin,salesman');
 Route::get('/categories_table' , [CategoryController::class , 'categories_table'])->name('categories_table')->middleware('checkrole:admin,salesman');
 Route::get('/add_category', [CategoryController::class , 'create'])->name('add_category')->middleware('checkrole:admin,salesman');
 Route::post('/storecategory' , [CategoryController::class , 'store'])->name('store_category')->middleware('checkrole:admin,salesman');

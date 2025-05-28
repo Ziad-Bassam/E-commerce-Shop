@@ -52,7 +52,7 @@ class CategoryController extends Controller
      */
     public function categories_table()
     {
-        $categories = $this->categoryService->categories_table();
+        $categories = $this->categoryService->getAllCategories();
         return view('categories.categories_table', ['categories' => $categories]);
     }
 

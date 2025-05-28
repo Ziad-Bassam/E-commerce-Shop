@@ -8,7 +8,7 @@ use Illuminate\Support\Str;
 class CategoryService
 {
 
-    public function categories_table()
+    public function getAllCategories()
     {
         return Category::all();
     }

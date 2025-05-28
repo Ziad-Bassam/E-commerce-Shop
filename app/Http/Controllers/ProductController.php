@@ -7,6 +7,12 @@ use App\Models\Category;
 use App\Models\ProductPhoto;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use App\Services\ProductService;
+use App\Services\CategoryService;
+use App\Http\Requests\StoreProductRequest;
+use App\Http\Requests\UpdateProductRequest;
+use App\Http\Requests\StoreProductImageRequest;
+
 
 
 class ProductController extends Controller
@@ -14,63 +20,56 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index($catid = NULL) {
+    protected $productService;
+    protected $categoryService;
 
-        if($catid){
-        // = if($catid = null)
 
-            $products = Product::where('category_id' , $catid)->paginate(6);
-            return view('product.product' , ['products' => $products ]);
+    public function __construct(ProductService $productService, CategoryService $categoryService)
+    {
+        $this->productService = $productService;
+        $this->categoryService = $categoryService;
+    }
 
-        }
+    /**
+     * Display a listing of the resource.
+     */
+    public function index($catid = null)
+    {
+        $products = $this->productService->getProductsByCategory($catid);
 
-        else{
-
-            $products = Product::paginate(6);
-            return view('product.product' , ['products' => $products ]);
-
-        }
+        return view('product.product', ['products' => $products]);
     }
 
 
-    public function products_table(){
+    /**
+     * Display a listing of the resource in table format.
+     */
+
+
+    public function products_table()
+    {
         $products = Product::all();
-        return view('product.productstable' , ['products' => $products ]);
+        return view('product.productstable', ['products' => $products]);
     }
+
 
     /**
      * Show the form for creating a new resource.
      */
     public function create()
     {
-
+        $categories = $this->categoryService->getAllCategories();
+        return view('product.addproduct',  ['categories' => $categories]);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+
+    public function store(StoreProductRequest $request)
     {
 
-        $request->validate([
-            'name' => ['required' , 'max:50'],
-            'price' => ['required' ],
-            'quantity' => ['required' ],
-            'category_id' => ['required'],
-            'photo' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-        ]);
-
-        $newproduct = new Product();
-        $newproduct->name = $request->name;
-        $newproduct->price = $request->price;
-        $newproduct->quantity = $request->quantity;
-        $newproduct->description = $request->description;
-        $image_path = $request->photo->move('uploads' , Str::uuid()->toString() . '-' . $request->photo->getClientOriginalName());
-        $newproduct->image_path = $image_path;
-        $newproduct->category_id = $request->category_id;
-        $newproduct->name_AR = '';
-        $newproduct->save();
-
+        $this->productService->storeProduct($request->validated() + ['photo' => $request->file('photo')]);
         return redirect('/addproduct');
     }
 
@@ -85,51 +84,34 @@ class ProductController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit($productid = NULL)
+    public function edit($productId = null)
     {
-        if ($productid != NULL) {
-
-            $product = Product::findOrFail($productid);
-            if($product == NULL){
-                // Better than findORfail
-                abort(403 , "Can't find this product");
-            }
-            $categories = Category::all();
-            return view('product.editproduct' , ['product' => $product , 'categories' => $categories]);
-        } else {
-            abort(403 , 'Please enter product id in the route');
+        if (!$productId) {
+            abort(403, 'Please enter product id in the route');
         }
 
+        $product = $this->productService->getProductById($productId);
+
+        if (!$product) {
+            abort(403, "Can't find this product");
+        }
+
+        $categories = $this->categoryService->getAllCategories();
+
+        return view('product.editproduct', [
+            'product' => $product,
+            'categories' => $categories,
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request)
+    public function update(UpdateProductRequest $request)
     {
-        $request->validate([
-            'name' => ['required' , 'max:50'],
-            'price' => ['required' ],
-            'quantity' => ['required' ],
-            'category_id' => ['required'],
-            'photo' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-        ]);
-
-        $product = Product::findOrFail($request->id);
-        $product->name = $request->name;
-        $product->price = $request->price;
-        $product->quantity = $request->quantity;
-        $product->description = $request->description;
-        $product->category_id = $request->category_id;
-        if ($request->has('photo')) {
-            $image_path = $request->photo->move('uploads' , Str::uuid()->toString() . '-' . $request->photo->getClientOriginalName());
-            $product->image_path = $image_path;
-        }
-
-        $product->save();
-
+        $data = $request->validated() + ['photo' => $request->file('photo'), 'id' => $request->id];
+        $this->productService->updateProduct($data);
         return redirect('/products');
-
     }
 
     /**
@@ -137,95 +119,57 @@ class ProductController extends Controller
      */
     public function destroy($productid = NULL)
     {
-        if ($productid) {
-            $product = Product::findorfail($productid);
-            $product->delete();
-            return redirect('/products');
-        } else {
-            abort(403 , 'Please enter product id in the route');
+        if (!$productid) {
+            abort(403, 'Please enter product id in the route');
         }
 
+        $this->productService->deleteProductById($productid);
 
+        return redirect('/products');
     }
 
-    public function addproduct(){
-        $categories = Category::all();
-        return view('product.addproduct',  ['categories' => $categories]);
-    }
-
-    public function search(Request $request){
-        $products = Product::where('name' , 'like' , '%'. $request->searchkey .'%')->paginate(6);
-        return view('product.product',  ['products' => $products]);
-    }
-
-
-    public function add_product_images($productid= NULL){
-
-        $product = Product::findOrFail($productid);
-        $productphotos = ProductPhoto::where('product_id',$productid)->get();
-        return view('product.AddProductImage',  ['product' => $product , 'productphotos' => $productphotos]);
-        abort(403 , 'Please enter product id in the route');
-    }
-
-    public function delete_product_photo($photoid = NULL)
+    public function search(Request $request)
     {
-        if ($photoid) {
-            $product = ProductPhoto::findorfail($photoid);
-            $product->delete();
-            return back();
-        } else {
-            abort(403 , 'Please enter product id in the route');
-        }
+        $searchKey = $request->input('searchkey', '');
 
+        $products = $this->productService->searchProducts($searchKey);
 
+        return view('product.product', ['products' => $products]);
     }
 
 
+    public function add_product_images($productId = null)
+    {
+        if (!$productId) {
+            abort(403, 'Please enter product id in the route');
+        }
+        return $this->productService->add_product_images($productId);
+    }
 
 
-    public function store_product_image(Request $request){
-        $request->validate([
-            'product_id' => ['required'],
-            'photo' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-        ]);
-
-
-        $productphoto = new ProductPhoto();
-        $productphoto->product_id = $request->product_id;
-        $image_path = $request->photo->move('uploads' , Str::uuid()->toString() . '-' . $request->photo->getClientOriginalName());
-        $productphoto->image_path = $image_path;
-        $productphoto->save();
+    public function store_product_image(StoreProductImageRequest $request)
+    {
+        $this->productService->store_product_image($request);
         return back();
-
     }
 
-
-
-    public function show_single_product($productid = NULL){
-        if ($productid) {
-            $singleproduct = Product::with('Category', 'ProductPhotos')->findOrFail($productid);
-
-
-
-            // $pricerange = $singleproduct->price * 0.10;
-            // $minprice = $singleproduct->price - $pricerange;
-            // $maxprice = $singleproduct->price + $pricerange;
-            $relatedproducts = Product::where('category_id' , $singleproduct->category_id)
-            ->where('id' , '!=' , $productid)
-            // ->whereBetween('price' ,  [ $minprice  , $maxprice])
-            ->inRandomOrder()
-            ->limit(3)
-            ->get();
-
-
-            return view('product.singleproduct' , [ 'product' => $singleproduct , 'relatedproducts' => $relatedproducts]);
-        } else {
-            abort(403 , 'Please enter product id in the route');
-        }
+    public function delete_product_photo($photoid = null)
+    {
+        $this->productService->deleteProductPhoto($photoid);
+        return back();
     }
 
 
 
 
 
+    public function show_single_product($productid = null)
+    {
+        $data = $this->productService->getSingleProductWithRelated($productid);
+
+        return view('product.singleproduct', [
+            'product' => $data['product'],
+            'relatedproducts' => $data['relatedproducts']
+        ]);
+    }
 }
