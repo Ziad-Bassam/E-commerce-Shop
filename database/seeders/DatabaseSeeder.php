@@ -37,26 +37,26 @@ class DatabaseSeeder extends Seeder
 
 
 
-        $faker = Faker::create();
+        // $faker = Faker::create();
 
-        for ($i = 1; $i <= 10; $i++) {
-            $productName = 'Product ' . $i;
+        // for ($i = 1; $i <= 10; $i++) {
+        //     $productName = 'Product ' . $i;
 
-            // التحقق من وجود المنتج بالفعل
-            if (DB::table('products')->where('name', $productName)->exists()) {
-                continue; // تجاهل المنتج الموجود
-            }
+        //     // التحقق من وجود المنتج بالفعل
+        //     if (DB::table('products')->where('name', $productName)->exists()) {
+        //         continue; // تجاهل المنتج الموجود
+        //     }
 
-            DB::table('products')->insert([
-                'name' => $productName,
-                'description' => 'this product ' . $i ,
-                'price' => $faker->randomFloat(2, 10, 1000), // سعر عشوائي بين 10 و 1000
-                'quantity' => $faker->numberBetween(1, 100), // كمية عشوائية بين 1 و 100
-                'category_id' => $faker->numberBetween(1, 5), // افترض وجود 5 فئات
-                'image_path' => $faker->imageUrl(), // رابط صورة عشوائي
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-        }
+        //     DB::table('products')->insert([
+        //         'name' => $productName,
+        //         'description' => 'this product ' . $i ,
+        //         'price' => $faker->randomFloat(2, 10, 1000), // سعر عشوائي بين 10 و 1000
+        //         'quantity' => $faker->numberBetween(1, 100), // كمية عشوائية بين 1 و 100
+        //         'category_id' => $faker->numberBetween(1, 5), // افترض وجود 5 فئات
+        //         'image_path' => $faker->imageUrl(), // رابط صورة عشوائي
+        //         'created_at' => now(),
+        //         'updated_at' => now(),
+        //     ]);
+        // }
     }
 }
